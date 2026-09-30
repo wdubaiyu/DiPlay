@@ -774,9 +774,10 @@ class DiPlayActivity : ComponentActivity() {
 
     private fun carPlaySizeControl(parent: LinearLayout) {
         val sizes = com.shilapi.xcertplay.airplay.CarPlaySize.entries
-        val current = com.shilapi.xcertplay.airplay.CarPlaySize.fromWidthMillimeters(AirPlayPersistence.loadWidthPhysicalMm(this))
+        val current = com.shilapi.xcertplay.airplay.CarPlaySize.fromUiScalePercent(AirPlayPersistence.loadUiScalePercent(this)) // [改动:尺寸档位] 选择器改为按画布档位回显（不再按毫米数）
         choice(parent, getString(R.string.carplay_size), sizes.map { it.localizedLabel(this) }, sizes.indexOf(current)) {
             AirPlayPersistence.saveWidthPhysicalMm(this, sizes[it].widthMillimeters)
+            AirPlayPersistence.saveUiScalePercent(this, sizes[it].uiScalePercent) // [改动:尺寸档位] 关键：选中档位时把画布缩放一起写入，重连后生效
         }
         parent.addView(label(getString(R.string.changes_the_size_of_carplay_icons_and_text_applying_a_size), 14, MUTED).apply {
             setPadding(0, 0, 0, dp(18))
@@ -946,7 +947,7 @@ class DiPlayActivity : ComponentActivity() {
                     appendLine("Authentication: local experimental beta identity; no remote fallback")
                     appendLine("CarPlay setup: ${if (setupError == null) "ready" else "authentication unavailable"}")
                     appendLine("Saved video preference (may differ from active session): ${if (AirPlayPersistence.loadHevcEnabled(appContext)) "HEVC" else "H.264"}; ${AirPlayPersistence.loadFps(appContext)} fps")
-                    appendLine("CarPlay size: ${com.shilapi.xcertplay.airplay.CarPlaySize.fromWidthMillimeters(AirPlayPersistence.loadWidthPhysicalMm(appContext)).label}")
+                    appendLine("CarPlay size: ${com.shilapi.xcertplay.airplay.CarPlaySize.fromUiScalePercent(AirPlayPersistence.loadUiScalePercent(appContext)).label} (canvas ${AirPlayPersistence.loadUiScalePercent(appContext)}%, width ${AirPlayPersistence.loadWidthPhysicalMm(appContext)} mm)") // [改动:上报日志] 诊断报告里同时给出画布档位与毫米数
                     appendLine("Saved resolution preference (may differ from active session): ${AirPlayPersistence.loadDisplayScaleTenths(appContext) * 10}%")
                     appendLine("Session: ${if (CarPlayBackgroundSession.active) "active" else if (CarPlayBackgroundSession.hasSession()) "connecting" else "stopped"}")
                     appendLine("Head-unit board: ${Build.BOARD}; hardware: ${Build.HARDWARE}; build: ${Build.DISPLAY}")

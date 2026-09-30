@@ -441,7 +441,7 @@ class CarPlayHostActivity : ComponentActivity() {
     private fun loadPersistedSettings() {
         displayScaleTenths = AirPlayPersistence.loadDisplayScaleTenths(this)
         // Size is now chosen only through CarPlaySize; ignore the canvas scale older builds stored.
-        uiScalePercent = CarPlayUiScale.DEFAULT
+        uiScalePercent = AirPlayPersistence.loadUiScalePercent(this) // [改动:尺寸档位] 关键改动：原来硬写 CarPlayUiScale.DEFAULT，画布档位永远不生效 可能和ios版本有关
         hevcEnabled = AirPlayPersistence.loadHevcEnabled(this)
         hevcSoftwareDecoderEnabled =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&

@@ -299,8 +299,13 @@ class CarPlayController(
             uiListener?.onCommand(session, type, params)
         }
 
+        // [改动:日志双写] 不再调用 debugLog()，否则同一句话会被 AirPlaySession 和本类各写一遍 logcat
         override fun onDebugLog(message: String) {
-            debugLog(message)
+            try {
+                uiListener?.onDebugLog(message)
+            } catch (error: Exception) {
+                Log.w(IphoneCarPlayConfiguration.TAG, "ui debug log callback failed", error)
+            }
         }
     }
 

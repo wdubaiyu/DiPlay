@@ -401,6 +401,7 @@
     <string name="option_size_large">大</string>
     <string name="option_size_medium">中</string>
     <string name="option_size_small">小</string>
+    <string name="option_size_smaller">更小</string>
     <string name="option_theme_scenario">场景 · 侧边地图</string>
     <string name="option_theme_map">地图 · 全屏地图</string>
     <string name="option_theme_simple">简约 · 侧边地图</string>
