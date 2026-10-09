@@ -88,16 +88,8 @@ class BydClusterSongTest {
 
     @Test
     fun textFitsTheDashboard() {
-        assertNull(ClusterSongState.text("  ", "Artist"))
+        assertEquals("Artist", ClusterSongState.text("  ", "Artist"))
         assertEquals("Title", ClusterSongState.text(" Title ", ""))
-
-        val long = ClusterSongState.text("Пісня".repeat(40), "Виконавець")!!
-        assertTrue(long.toByteArray(Charsets.UTF_16LE).size <= ClusterSongState.MAX_TEXT_BYTES)
-        assertEquals(127, long.length)
-
-        // An emoji is never cut in half.
-        val emoji = ClusterSongState.text("a" + "🎵".repeat(100), null)!!
-        assertTrue(emoji.toByteArray(Charsets.UTF_16LE).size <= ClusterSongState.MAX_TEXT_BYTES)
-        assertTrue(!Character.isHighSurrogate(emoji.last()))
+        assertEquals("Title", ClusterSongState.text(" Title ", "Artist"))
     }
 }

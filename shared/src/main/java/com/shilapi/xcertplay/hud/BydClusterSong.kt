@@ -35,9 +35,9 @@ internal class ClusterSongState {
                 title = nextTitle
                 if (nextTitle.isBlank()) artist = null
             }
-            if (nextTitle?.isBlank() != true) {
-                runCatching { item.optionalString(ARTIST) }.getOrNull()?.let { artist = it }
-            }
+        }
+        if (title?.isBlank() == true) {
+            runCatching { body.optionalString(ARTIST) }.getOrNull()?.let { artist = it }
         }
         runCatching { body.optionalGroup(PLAYBACK)?.optionalU8(STATUS) }.getOrNull()?.let { status ->
             playing = status == STATUS_PLAYING || status == STATUS_SEEK_FORWARD || status == STATUS_SEEK_BACKWARD
@@ -75,14 +75,13 @@ internal class ClusterSongState {
 
         /** "Title — Artist", shortened to what the dashboard takes; null without a title. */
         fun text(title: String?, artist: String?): String? {
-            val name = title?.trim()?.takeIf { it.isNotEmpty() } ?: return null
-            val full = artist?.trim()?.takeIf { it.isNotEmpty() }?.let { "$name — $it" } ?: name
-            var end = full.length
-            while (full.substring(0, end).toByteArray(Charsets.UTF_16LE).size > MAX_TEXT_BYTES) {
+            val name = title?.trim()?.takeIf { it.isNotEmpty() && "暂无歌词" != it } ?: return artist?.trim()?.takeIf { it.isNotEmpty() }
+            var end = name.length
+            while (name.substring(0, end).toByteArray(Charsets.UTF_16LE).size > MAX_TEXT_BYTES) {
                 end--
-                if (end > 0 && Character.isLowSurrogate(full[end])) end--
+                if (end > 0 && Character.isLowSurrogate(name[end])) end--
             }
-            return full.substring(0, end)
+            return name.substring(0, end)
         }
     }
 }
